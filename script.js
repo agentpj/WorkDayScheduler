@@ -1,15 +1,9 @@
 var dateDisplayEl = $('#currentDay');
-var scheduleDisplayEl = $('.container-lg');
-var hourPastEl = $('#hour-past');
-var hourPresentEl = $('#hour-present');
-var hourFutureEl = $('#hour-future');
-var descriptionEl = $('.description');
-var hourEl = $('.hour');
-
 var officeHours = [9, 10, 11, 12, 13, 14, 15, 16, 17];
 
+// this is to display the title with the day, date and time
 function displayDate() {
-  var rightNow = dayjs().format('MMMM DD, YYYY hh:mm a');
+  var rightNow = dayjs().format('dddd, MMMM DD, YYYY hh:mm a');
    dateDisplayEl.text(rightNow);
 }
 
@@ -22,14 +16,14 @@ function readScheduleDataFromStorage() {
   else {
     schedules = [];
   }
-  console.log("readScheduleData " + schedules);
   return schedules;
 }
 
+// this sets the class for the block to display the time depending on current time
+// depending on class, block will display, grey, or red or green
 function checkTime() {
 $(".time-block").each(function(index,element){
   var rightNowHour = dayjs().hour();
-  console.log($(this).attr("id").split("-")[1]);
   var blockHour=$(this).attr("id").split("-")[1];
  if (rightNowHour < blockHour) {
   $(this).addClass("future")
@@ -42,18 +36,20 @@ $(".time-block").each(function(index,element){
  })
 }
 
+// event for Saving the schedule in Local Storage
 $(".saveBtn").on("click",function(){
-var inputSchedule = $(this).prev(".description").val();
-console.log($(this));
+var inputSchedule = $(this).prev(".description").val().trim();
 var inputId = $(this).parent().attr('id');
 
-console.log(inputSchedule);
-console.log(inputId);
-localStorage.setItem(inputId,inputSchedule);
+var newSchedule = {
+  id: inputId,
+  scheduleEvent: inputSchedule, 
+};
+localStorage.setItem("schedules",JSON.stringify(newSchedule));
 })
 
 
 //  Add code to display the current date in the header of the page.
-
-checkTime();
 displayDate();
+readScheduleDataFromStorage();
+checkTime();
